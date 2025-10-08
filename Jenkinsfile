@@ -3,9 +3,9 @@ pipeline {
 
     stages{    
         stage('Checkout') {
-            steps{
+            steps {
                 echo "Checking out the source code"
-                checkout "https://github.com/christiandarvs/pipeline-experiment.git"
+                git branch: 'main', url: 'https://github.com/christiandarvs/pipeline-experiment.git'
             }
         }
 
@@ -14,7 +14,7 @@ pipeline {
                 echo "Buidling the Go application..."
                 sh '''
                 go mod init go-calculator
-                go mod tiny
+                go mod tidy
                 go build -o main main.go
                 '''
             }
