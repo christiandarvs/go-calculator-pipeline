@@ -1,7 +1,7 @@
 pipeline {
-    agent{docker {image 'golang:1.25.1-alpine3.22' }}
+    agent { docker { image 'golang:1.23-alpine' } }
 
-    stages{    
+    stages {
         stage('Checkout') {
             steps {
                 echo "Checking out the source code"
@@ -10,28 +10,39 @@ pipeline {
         }
 
         stage('Build') {
-            steps{
-                echo "Buidling the Go application..."
+            steps {
+                echo 'Building the Go application...'
                 sh '''
-                go mod init go-calculator
-                go mod tidy
-                go build -o main main.go
+                    go mod tidy
+                    go build -o main main.go
                 '''
             }
         }
 
-        stage("Test") {
-            steps{
-                echo "Running tests..."
-                sh "go test ./... -v"
+        stage('Test') {
+            steps {
+                echo 'Running tests...'
+                sh 'go test ./... -v'
             }
         }
 
-        stage("Run") {
-            steps{
-                echo "Running the compiled binary..."
-                sh "./main"
+        stage('Run') {
+            steps {
+                echo 'Running the compiled binary...'
+                sh './main'
             }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline completed.'
+        }
+        success {
+            echo '✅ Build and tests passed successfully!'
+        }
+        failure {
+            echo '❌ Build or tests failed.'
         }
     }
 }
